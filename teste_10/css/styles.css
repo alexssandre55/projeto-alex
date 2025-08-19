@@ -1,0 +1,8 @@
+body {
+    margin-bottom: 1000pix;
+}
+
+#btn-container {
+    padding: 30px;
+    background-color: rgb(34, 214, 10);
+}
