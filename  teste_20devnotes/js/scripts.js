@@ -5,6 +5,8 @@ const noteInput = document.querySelector("#note-input");
 
 const addNoteBtn = document.querySelector(".add-note");
 
+const searchInput = document.querySelector("#search-input");
+
 // Funções
 function showNotes() {
     getNotes().forEach((note) => {
@@ -78,6 +80,14 @@ function createNote(id, content, fixed) {
     }
 
     // Evento do elemento
+
+    element.querySelector("textarea").addEventListener("keyup", () => {
+
+        const noteContent = e.target.value;
+
+        updateNote(id, noteContent);
+    })
+
     element.querySelector(".b-pin").addEventListener("click", () => {
       toggleFixNote(id);
     });
@@ -133,6 +143,18 @@ function copyNote(id) {
     saveNotes(notes);
 }
 
+function updateNote(id, newContent) {
+
+    const notes = getNotes();
+
+    const targetNote = notes.filter((note) => note.id === id)[0];
+
+    targetNote.content = newContent;
+
+    saveNotes(notes);
+
+}
+
 
 //Local storage
 function getNotes() {
@@ -147,8 +169,44 @@ function saveNotes(notes) {
     localStorage.setItem("notes", JSON.stringify(notes));
 }
 
+function searchNotes(search) {
+    const searchResults = getNotes().filter((note) => note.content.includes(search));
+
+    if(search != "") {
+        clearNotes();
+
+        searchResults.forEach((note) => {
+            const noteElement = createNote(note.id, note.content);
+
+            notesContainer.appendChild(noteElement);
+      });
+
+      return;
+  }
+
+    clearNotes();
+
+    showNotes();
+}
+
 // Eventos
 addNoteBtn.addEventListener("click", () => addNote());
+
+searchInput.addEventListener("keyup", (e) => {
+
+    const searchTerm = e.target.value;
+
+    searchNotes(search);
+
+})
+
+noteInput.addEventListener("keydown", (e) => {
+
+    if(e.key === "Enter") {
+        addNote();
+    }
+
+});
 
 // Inicialização
 showNotes();
