@@ -1,176 +1,213 @@
- 
- 
- 
- *{ 
-    
-    font-family: "Montserrat",sans-serif;
-      padding: 0;
-      margin: 0;
-      box-sizing: border-box;
-      color: #333;
+ * {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+   font-family: 'Roboto', sans-serif;
+ }
 
- };
-
-html {
-   background: linear-gradient(180deg, #ea03ff 0%, #0097ff 100%);
- };
-
- 
-
- input:focus {
-   outline: none;
- };
+ body {
+   background-color: #f5f5f5;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   min-height: 100vh;
+   padding: 20px;
+ }
 
  #register-container {
-   max-width: 900px;
-   min-height: 80vh;
-   margin: 2rem auto;
    display: flex;
-   box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
- };
+   max-width: 1000px;
+   width: 100%;
+   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+   border-radius: 10px;
+   overflow: hidden;
+ }
 
- #redister-banner {
-  background: url('../img/bg-form.jpg');
-  background-size: cover;
-  background-position: center;
-  width: 50%;
- };
+ #register-banner {
+   flex: 1;
+   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+   color: white;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   position: relative;
+ }
 
  #banner-layer {
-  background-color: rgba(25, 11, 122, 0.7);
-  height: 100%;
-  padding: 2rem;
-  display: flex;
-  align-items: center;
- };
+   background-color: rgba(0, 0, 0, 0.3);
+   width: 100%;
+   height: 100%;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   padding: 20px;
+ }
 
- #register-banner h1 {
-  font-size: 4rem;
-  margin-bottom: 1.5rem;
-  color: #fff;
-  word-spacing: 50rem;
- };
+ #banner-layer h1 {
+   font-size: 2.5rem;
+   text-align: center;
+   font-weight: 700;
+ }
 
  #register-form {
-  background-color: #fdfdfd;
-  padding: 2rem;
-  width: 50%;
-  display: flex;
-  flex-direction: column;
- };
+   flex: 1;
+   background-color: white;
+   padding: 40px;
+ }
 
-  #register-form h2 {
-    text-align: center;
-    font-size: 2.2rem;
-    margin-bottom: 1rem;
-  };
+ #register-form h2 {
+   color: #333;
+   margin-bottom: 10px;
+   font-size: 1.8rem;
+ }
 
-  #register-form p {
-    text-align: center;
-    margin-bottom: 1,5rem;
-    color: #aaa;
-    font-size: 0.8rem;
-  };
+ #register-form>p {
+   color: #666;
+   margin-bottom: 30px;
+   font-size: 0.9rem;
+ }
 
-  .form-control {
-    margin-bottom: 1rem;
-    display: flex;
-    flex-direction: column;
-  };
+ .form-control {
+   margin-bottom: 20px;
+ }
 
-  .form-control label {
-    margin-bottom: 0.6rem;
-    font-weight: bold;
-  };
+ .form-control label {
+   display: block;
+   margin-bottom: 5px;
+   color: #555;
+   font-weight: 500;
+ }
 
-  .form-control input {
-    border:none;
-    border-bottom: 1px solid #aaa;
-    padding: 0.6rem;
-  };
- 
-#open-generate-password {
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.4s;
-};
+ .form-control input[type="text"],
+ .form-control input[type="email"],
+ .form-control input[type="password"] {
+   width: 100%;
+   padding: 12px 15px;
+   border: 1px solid #ddd;
+   border-radius: 5px;
+   font-size: 1rem;
+   transition: border 0.3s;
+ }
 
-#open-generate-password:hover {
-  color: #0097ff;
-};
+ .form-control input:focus {
+   border-color: #6a11cb;
+   outline: none;
+ }
 
-#register-form #generate-password {
-  border: 1px solid #0097ff;
-  border-radius: 4px;
-  font-weight: bold;
-  font-size: 1.2rem;
-  padding: .4rem;
-  color: #333;
-  text-align: center;
-  margin-bottom: 1rem;
-  display: none;
-};
+ .form-control input[type="checkbox"] {
+   margin-right: 10px;
+ }
 
-#register-form #generate-password p {
-  color: #81d340;
-  margin-bottom: 0.5rem;
-};
+ #open-generate-password {
+   color: #6a11cb;
+   cursor: pointer;
+   font-weight: 500;
+ }
 
-#reggister-form input[type="submit"],
-#generate-options button,
-#copy-password {
-  background-color: #81d340;
-  color: #fff;
-  opacity: .8;
-  border: none;
-  border-radius: 2rem;
-  padding: 1rem 1.4rem;
-  max-width: 150px;
-  cursor: pointer;
-  align-self: flex-end;
-  transition: 0.4s;
-};
+ #open-generate-password:hover {
+   text-decoration: underline;
+ }
 
-#reggister-form input[type="submit"]:hover {
-  opacity: 1;
-};
+ #generate-options {
+   background-color: #f9f9f9;
+   padding: 20px;
+   border-radius: 5px;
+   margin-top: 20px;
+   display: none;
+ }
 
-/* Segunda versão */
-#generate-options {
-  margin-bottom: 1rem;
-  padding: 1rem;
-  border: 1px solid #ddd;
-};
+ #generate-options.active {
+   display: block;
+ }
 
-#generate-options .form-control {
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-};
+ #generate-options p {
+   margin-bottom: 15px;
+   color: #555;
+ }
 
-#generate-options label {
-  font-size: .8rem;
-};
+ #generate {
+   background-color: #6a11cb;
+   color: white;
+   border: none;
+   padding: 12px 20px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-size: 1rem;
+   font-weight: 500;
+   transition: background-color 0.3s;
+   margin-top: 10px;
+   width: 100%;
+ }
 
-#generate-options input[type="number"] {
-  max-width: 30px;
-  text-align: center;
-  border: 1px solid #ccc;
-};
+ #generate:hover {
+   background-color: #5a0db3;
+ }
 
-#generate-options button {
-  background-color: #0097ff;
-  display: block;
-  margin: 0 auto;
-};
+ #generated-password {
+   margin-top: 20px;
+   padding: 15px;
+   background-color: #f0f8ff;
+   border-radius: 5px;
+   border-left: 4px solid #6a11cb;
+   display: none;
+ }
 
-#copy-password {
-  margin: 1rem auto;
-  background-color: transparent;
-  color: #81d340;
-  padding: .5rem 1rem;
-};
+ #generated-password.active {
+   display: block;
+ }
 
-.hide {
-  display: none;
-};
+ #generated-password p {
+   margin-bottom: 10px;
+   color: #555;
+ }
+
+ #password-result {
+   font-size: 1.2rem;
+   font-weight: 600;
+   color: #333;
+   margin: 10px 0;
+   word-break: break-all;
+ }
+
+ #copy-password {
+   background-color: #2575fc;
+   color: white;
+   border: none;
+   padding: 8px 15px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-size: 0.9rem;
+   transition: background-color 0.3s;
+ }
+
+ #copy-password:hover {
+   background-color: #1c68e0;
+ }
+
+ input[type="submit"] {
+   background-color: #6a11cb;
+   color: white;
+   border: none;
+   padding: 15px;
+   border-radius: 5px;
+   cursor: pointer;
+   font-size: 1rem;
+   font-weight: 500;
+   transition: background-color 0.3s;
+   width: 100%;
+   margin-top: 20px;
+ }
+
+ input[type="submit"]:hover {
+   background-color: #5a0db3;
+ }
+
+ @media (max-width: 768px) {
+   #register-container {
+     flex-direction: column;
+   }
+
+   #register-banner {
+     min-height: 200px;
+   }
+ }

@@ -1,239 +1,152 @@
-// Elementos
-const notesContainer = document.querySelector("#notes-container");
 
-const noteInput = document.querySelector("#note-input");
 
-const addNoteBtn = document.querySelector(".add-note");
+    document.addEventListener('DOMContentLoaded', function() {
+            // Elementos DOM
+            const notesContainer = document.getElementById('notes-container');
+    const noteContentInput = document.getElementById('note-content');
+    const addNoteButton = document.querySelector('.add-note');
+    const searchInput = document.getElementById('search-input');
+    const exportButton = document.getElementById('export-notes');
 
-const searchInput = document.querySelector("#search-input");
+    // Carregar notas do localStorage
+    let notes = JSON.parse(localStorage.getItem('devnotes')) || [];
 
-const exportBtn = document.querySelector("#export-notes");
+    // Função para salvar notas no localStorage
+    function saveNotes() {
+        localStorage.setItem('devnotes', JSON.stringify(notes));
+            }
 
-// Funções
-function showNotes() {
-    getNotes().forEach((note) => {
-        const noteElement = createNote(note.id, note.content, note.fixed);
-        
-        notesContainer.appendChild(noteElement);
- });
-}
+    // Função para criar uma nova nota
+    function createNoteElement(note, index) {
+                const noteElement = document.createElement('div');
+    noteElement.className = 'note';
+    noteElement.innerHTML = `
+    <div class="note-content">${note.content}</div>
+    <div class="note-date">${new Date(note.date).toLocaleString('pt-BR')}</div>
+    <div class="note-actions">
+        <button class="note-action delete-note" data-index="${index}">
+            <i class="bi bi-trash"></i>
+        </button>
+    </div>
+    `;
+    return noteElement;
+            }
 
-function clearNotes() {
-    notesContainer.replaceChildren([]);
-}
+    // Função para renderizar notas
+    function renderNotes(filteredNotes = null) {
+                const notesToRender = filteredNotes || notes;
 
-function addNote() {
-const notes = getNotes();
+    if (notesToRender.length === 0) {
+        notesContainer.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-journal-x"></i>
+                            <h3>Nenhuma nota encontrada</h3>
+                            <p>${filteredNotes ? 'Tente ajustar sua busca' : 'Adicione sua primeira nota acima'}</p>
+                        </div>
+                    `;
+    return;
+                }
 
-    const noteObject = {
-        id: generateId(),
-        content: noteInput.value,
-        fixed: false
-    };
-
-    const noteElement = createNote(noteObject.id, noteObject.content);
-
+    notesContainer.innerHTML = '';
+                notesToRender.forEach((note, index) => {
+                    const noteElement = createNoteElement(note, index);
     notesContainer.appendChild(noteElement);
-    note.push(noteObject)
-
-    saveNotes(notes);
-
-    noteInput.value = "";
-}
-
-function generateId() {
-    return Math.floor(Math.random() * 5000);
-}
-
-function createNote(id, content, fixed) {
-
-    const element = document.createElement("div");
-
-    element.classList.add("note");
-
-    const textarea = document.createElement("textarea");
-
-    textarea.value = content;
-
-    textarea.placeholder = "Adicionar algum texto...";
-
-    element.appendChild(textarea);
-
-    const pinIcon = document.createElement("i");
-
-    pinIcon.classList.add(...["bi, bi-pin"]);
-
-    element.appendChild(pinIcon);
-
-    const deleteIcon = document.createElement("i");
-
-    pinIcon.classList.add(...["bi, bi-x-lg"]);
-
-    element.appendChild(deleteIcon);
-
-    const duplicateIcon = document.createElement("i");
-
-    pinIcon.classList.add(...["bi, bi-file-earmark-plus"]);
-
-    element.appendChild(duplicateIcon);
-
-    if(fixed) {
-        element.classList.add("fixed");
-    }
-
-    // Evento do elemento
-
-    element.querySelector("textarea").addEventListener("keyup", () => {
-
-        const noteContent = e.target.value;
-
-        updateNote(id, noteContent);
-    })
-
-    element.querySelector(".b-pin").addEventListener("click", () => {
-      toggleFixNote(id);
-    });
-
-    element.querySelector(".bi-x-lg").addEventListener("click", () => {
-      deleteNote(id, element);
-    });
-
-    element.querySelector(".bi-file-earmark-plus").addEventListener("click", () => {
-        copyNote(id);
-    });
-
-        return element;
- }
-
-function toggleFixNote(id) {
-    const notes = getNotes();
-
-    const targetNote = notes.filter((note) => note.id === id)[0];
-
-    targetNote.fixed = !targetNote.fixed;
-
-    saveNotes(notes);
-    showNotes();
-}
-
-function deleteNote(id, element) {
-
-    const notes = getNotes().filter((note) => note.id !== id);
-
-    saveNotes(notes);
-
-    notesContainer.removeChild(element);
-}
-
-function copyNote(id) {
-    const notes = getNotes();
-
-    const targetNote = notes.filter((note) => note.id === id)[0];
-
-    const noteObject = {
-        id: generateId(),
-        content: targetNote.content,
-        fixed: false
-    };
-
-    const noteElement = createNote(noteObject.id, noteObject.content, noteObject.fixed);
-    
-    notesContainer.appendChild(noteElement);
-
-    notes.push(noteObject);
-    
-    saveNotes(notes);
-}
-
-function updateNote(id, newContent) {
-
-    const notes = getNotes();
-
-    const targetNote = notes.filter((note) => note.id === id)[0];
-
-    targetNote.content = newContent;
-
-    saveNotes(notes);
-
-}
-
-
-//Local storage
-function getNotes() {
-    const notes = JSON.parse(localStorage.getItem("notes") || "[]");
-
-    const oederedNotes = notes.sort((a, b) => (a.fixed > b.fixed ? -1 : 1));
-
-    return ordereNotes;
-};
-
-function saveNotes(notes) {
-    localStorage.setItem("notes", JSON.stringify(notes));
-}
-
-function searchNotes(search) {
-    const searchResults = getNotes().filter((note) => note.content.includes(search));
-
-    if(search != "") {
-        clearNotes();
-
-        searchResults.forEach((note) => {
-            const noteElement = createNote(note.id, note.content);
-
-            notesContainer.appendChild(noteElement);
-      });
-
-      return;
-  }
-
-    clearNotes();
-
-    showNotes();
-}
-
-function exportNotes() {
-    const notes = getNotes();
-
-    const csvString = [
-        ["ID", "Content", "Fixed"],
-        ...notes.map((note) => [note.id, note.content, note.fixed])
-    ]
-    .map((e) => e.join(","))
-    .join("\n");
-
-    const element = document.createElement("a")
-
-    element.href = "data:text/csv;charset=utf-8," + encodeURI(csvString);
-
-    element.target = "_blank";
-
-    element.download = "notes.csv"; 
-
-    element.click();
-}
-
-// Eventos
-addNoteBtn.addEventListener("click", () => addNote());
-
-searchInput.addEventListener("keyup", (e) => {
-
-    const searchTerm = e.target.value;
-
-    searchNotes(search);
-
-})
-
-noteInput.addEventListener("keydown", (e) => {
-
-    if(e.key === "Enter") {
+                });
+
+                // Adicionar event listeners aos botões de deletar
+                document.querySelectorAll('.delete-note').forEach(button => {
+        button.addEventListener('click', function () {
+            const index = parseInt(this.getAttribute('data-index'));
+            deleteNote(index);
+        });
+                });
+            }
+
+    // Função para adicionar uma nova nota
+    function addNote() {
+                const content = noteContentInput.value.trim();
+
+    if (content === '') {
+        alert('Por favor, digite o conteúdo da nota.');
+    return;
+                }
+
+    const newNote = {
+        content: content,
+    date: new Date().toISOString()
+                };
+
+    notes.unshift(newNote);
+    saveNotes();
+    renderNotes();
+    noteContentInput.value = '';
+    noteContentInput.focus();
+            }
+
+    // Função para deletar uma nota
+    function deleteNote(index) {
+                if (confirm('Tem certeza que deseja excluir esta nota?')) {
+        notes.splice(index, 1);
+    saveNotes();
+    renderNotes();
+                }
+            }
+
+    // Função para filtrar notas
+    function filterNotes() {
+                const searchTerm = searchInput.value.toLowerCase().trim();
+
+    if (searchTerm === '') {
+        renderNotes();
+    return;
+                }
+
+                const filteredNotes = notes.filter(note =>
+    note.content.toLowerCase().includes(searchTerm)
+    );
+
+    renderNotes(filteredNotes);
+            }
+
+    // Função para exportar notas como CSV
+    function exportToCSV() {
+                if (notes.length === 0) {
+        alert('Não há notas para exportar.');
+    return;
+                }
+
+    let csvContent = "Conteúdo,Data\n";
+                
+                notes.forEach(note => {
+                    const escapedContent = `"${note.content.replace(/"/g, '""')}"`;
+    const formattedDate = new Date(note.date).toLocaleString('pt-BR');
+    csvContent += `${escapedContent},${formattedDate}\n`;
+                });
+
+    const blob = new Blob([csvContent], {type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', 'devnotes.csv');
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+            }
+
+    // Event Listeners
+    addNoteButton.addEventListener('click', addNote);
+
+    noteContentInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
         addNote();
-    }
+                }
+            });
 
-});
+    searchInput.addEventListener('input', filterNotes);
 
-exportBtn.addEventListener("click", () => {
+    exportButton.addEventListener('click', exportToCSV);
 
-});
-
-// Inicialização
-showNotes();
+    // Renderizar notas iniciais
+    renderNotes();
+        });

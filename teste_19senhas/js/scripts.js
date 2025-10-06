@@ -1,102 +1,104 @@
-// Seleção de elementos 
-const generatePasswordButton = document.querySelector("#generate-password");
-const generatePasswordElement = document.querySelector("#generated-password");
 
-// Novas funcionalidades
-const openCloseGeneratorbutton = document.querySelector(
-    "#open-generate-password"
-);
+document.addEventListener('DOMContentLoaded', function () {
+    // Elementos do DOM
+    const openGeneratePassword = document.getElementById('open-generate-password');
+    const generateOptions = document.getElementById('generate-options');
+    const generateButton = document.getElementById('generate');
+    const generatedPassword = document.getElementById('generated-password');
+    const passwordResult = document.getElementById('password-result');
+    const copyPasswordButton = document.getElementById('copy-password');
+    const passwordField = document.getElementById('password');
+    const registrationForm = document.getElementById('registration-form');
 
-const generatePasswordContainer = document.querySelector("#generate-options");
-const lengthInput = document.querySelector("#length");
-const lettersInput = document.querySelector("#letters");
-const nambersInput = document.querySelector("#numbers");
-const symbolsInput = document.querySelector("#symbols");
-const copyPasswordButton = document.querySelector("#copy-password");
+    // Alternar visibilidade das opções de geração de senha
+    openGeneratePassword.addEventListener('click', function () {
+        generateOptions.classList.toggle('active');
+    });
 
+    // Gerar senha
+    generateButton.addEventListener('click', function () {
+        const length = parseInt(document.getElementById('length').value);
+        const includeLetters = document.getElementById('letters').checked;
+        const includeNumbers = document.getElementById('numbers').checked;
+        const includeSymbols = document.getElementById('symbols').checked;
 
+        const password = generatePassword(length, includeLetters, includeNumbers, includeSymbols);
+        passwordResult.textContent = password;
+        generatedPassword.classList.add('active');
 
-// Funções 
-const getLetterLowerCase = () => {
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 97);
-};
+        // Preencher automaticamente o campo de senha
+        passwordField.value = password;
+    });
 
-const getLetterUpperCase = () => {
-    return String.fromCharCode(Math.floor(Math.random() * 26) + 65);
-};
+    // Copiar senha para a área de transferência
+    copyPasswordButton.addEventListener('click', function () {
+        const password = passwordResult.textContent;
+        if (password) {
+            navigator.clipboard.writeText(password).then(function () {
+                alert('Senha copiada para a área de transferência!');
+            }).catch(function (err) {
+                console.error('Erro ao copiar a senha: ', err);
+            });
+        }
+    });
 
-const getNumber = () => {
-    return String.fromCharCode(Math.floor(Math.random() * 10) + 48);
-};
+    // Função para gerar senha
+    function generatePassword(length, letters, numbers, symbols) {
+        const lowercase = 'abcdefghijklmnopqrstuvwxyz';
+        const uppercase = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        const nums = '0123456789';
+        const syms = '!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-const getSymbol = () => {
-    const symbols = ",.;~^[]{}!@#$%&*()-+=/<>?";
-    return symbols[Math.floor(Math.random() * symbols.length)];
-};
+        let characters = '';
+        let password = '';
 
-const generatePassword = (getLetterLowerCase, getLetterUpperCase, getNumber, getSymbol) => {
-    let password = "";
+        if (letters) characters += lowercase + uppercase;
+        if (numbers) characters += nums;
+        if (symbols) characters += syms;
 
-// Segunda versão
+        // Garantir que pelo menos um caractere de cada tipo selecionado seja incluído
+        if (letters) password += getRandomChar(lowercase) + getRandomChar(uppercase);
+        if (numbers) password += getRandomChar(nums);
+        if (symbols) password += getRandomChar(syms);
 
-    const passwordLength = +lengthInput.value;
+        // Preencher o restante da senha
+        for (let i = password.length; i < length; i++) {
+            password += getRandomChar(characters);
+        }
 
-    const generators = [];
-
-    if (lettersInput.checked) {
-        generators.push(getLetterLowerCase, getLetterUpperCase);
+        // Embaralhar a senha para evitar padrões previsíveis
+        return shuffleString(password);
     }
 
-    if (numbersInput.checked) {
-        generators.push(getNumber);
+    function getRandomChar(string) {
+        return string[Math.floor(Math.random() * string.length)];
     }
 
-    if (symbolsInput.checked) {
-        generators.push(getSymbol);
+    function shuffleString(string) {
+        const array = string.split('');
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array.join('');
     }
 
-        console.log(generators.length);
-    
+    // Validação do formulário
+    registrationForm.addEventListener('submit', function (e) {
+        e.preventDefault();
 
-    if (generators.length === 0) {
-        return;   
-    }
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmpassword').value;
 
-    for (i = 0; i < passwordLength; i = i + generators.length) {
-        generators.forEach(() => {
-            const randomValue =
-             generators[Math.floor(Math.random() * generators.length)]();
-            password += randomValue;
-        });
-    }
-    password = password.slice(0, passwordLength);
-    generatePasswordElement.style.display = "block";
-    generatePasswordElement.querySelector("h4").innerText = password;
-};
+        if (password !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
 
-// Eventos
-generatePasswordButton.addEventListener("click", () => {
-    generatePassword(
-    getLetterLowerCase,
-        getLetterUpperCase,
-        getNumber,
-        getSymbol
-    );
-});
-
-openCloseGeneratorbutton.addEventListener("click", () => {
-    generatePasswordContainer.classList.toggle("hide");
-});
-
-copyPasswordButton.addEventListener("click", () => {
-    e.preventDefault();
-    const password = generatePasswordElement.querySelector("h4").innerText;
-
-    navigator.clipboard.writeText(password).then(() => {
-        copyPasswordButton.innerText = "Senha copiada com sucesso!"
-
-        setTimeout(() => {
-            copyPasswordButton.innerText = "Copiar senha"
-        }, 1000);
+        // Aqui você normalmente enviaria os dados para o servidor
+        alert('Cadastro realizado com sucesso!');
+        registrationForm.reset();
+        generateOptions.classList.remove('active');
+        generatedPassword.classList.remove('active');
     });
 });
